@@ -52,30 +52,30 @@ IGNORE_CRYPTO_KEYWORDS = [
     'dogecoin', 'doge', 'shiba', 'cardano', 'ada', 'ripple', 'xrp',
 ]
 
-IGNORE_SPORTS_KEYWORDS = [
-    'nba', 'nfl', 'mlb', 'nhl', 'mls', 'ufc', 'boxing',
-    'football', 'basketball', 'baseball', 'hockey', 'soccer',
-    'super bowl', 'world series', 'playoffs', 'championship',
-    'lakers', 'warriors', 'celtics', 'knicks', 'heat', 'bucks',
-    'cowboys', 'patriots', 'chiefs', 'eagles', 'packers',
-    'yankees', 'dodgers', 'red sox', 'mets',
-    'premier league', 'la liga', 'champions league',
-    'tennis', 'golf', 'nascar', 'formula 1', 'f1',
-    'cricket',
-]
+# IGNORE_SPORTS_KEYWORDS = [
+#     'nba', 'nfl', 'mlb', 'nhl', 'mls', 'ufc', 'boxing',
+#     'football', 'basketball', 'baseball', 'hockey', 'soccer',
+#     'super bowl', 'world series', 'playoffs', 'championship',
+#     'lakers', 'warriors', 'celtics', 'knicks', 'heat', 'bucks',
+#     'cowboys', 'patriots', 'chiefs', 'eagles', 'packers',
+#     'yankees', 'dodgers', 'red sox', 'mets',
+#     'premier league', 'la liga', 'champions league',
+#     'tennis', 'golf', 'nascar', 'formula 1', 'f1',
+#     'cricket',
+# ]
 
 # Agent behavior - REAL-TIME WebSocket + Analysis
-ANALYSIS_CHECK_INTERVAL_SECONDS = 300  # How often to check for new markets to analyze (5 minutes)
-NEW_MARKETS_FOR_ANALYSIS = 3  # Trigger analysis when we have 3 NEW unanalyzed markets
-MARKETS_TO_ANALYZE = 3  # Number of recent markets to send to AI
+ANALYSIS_CHECK_INTERVAL_SECONDS = 600  # How often to check for new markets to analyze (5 minutes)
+NEW_MARKETS_FOR_ANALYSIS = 10  # Trigger analysis when we have 3 NEW unanalyzed markets
+MARKETS_TO_ANALYZE = 10  # Number of recent markets to send to AI
 MARKETS_TO_DISPLAY = 20  # Number of recent markets to print after each update
 REANALYSIS_HOURS = 8  # Re-analyze markets after this many hours (even if previously analyzed)
 
 # AI Configuration
-USE_SWARM_MODE = True  # Use swarm AI (multiple models) instead of single XAI model
-AI_MODEL_PROVIDER = "xai"  # Model to use if USE_SWARM_MODE = False
-AI_MODEL_NAME = "grok-2-fast-reasoning"  # Model name if not using swarm
-SEND_PRICE_INFO_TO_AI = False  # Send market price/odds to AI models
+USE_SWARM_MODE = False  # Use swarm AI (multiple models) instead of single XAI model
+AI_MODEL_PROVIDER = "openai"  # Model to use if USE_SWARM_MODE = False
+AI_MODEL_NAME = "gpt-4o"  # Model name if not using swarm
+SEND_PRICE_INFO_TO_AI = True  # Send market price/odds to AI models
 
 # 🌙 Moon Dev - WEB SEARCH Configuration (NEW!)
 WEB_SEARCH_MODEL = "gpt-4o-mini-search-preview"  # OpenAI search model with built-in web search
@@ -85,11 +85,13 @@ OPENAI_API_KEY = os.getenv("OPENAI_KEY")
 # 🌙 Moon Dev - AI Prompts
 MARKET_ANALYSIS_SYSTEM_PROMPT = """You are a prediction market expert analyzing Polymarket markets.
 You have been provided with RECENT NEWS AND CONTEXT for each market from web search.
+Convert the Polymarket price to American odds.
 Use this context to make more informed predictions.
 
 For each market, provide your prediction in this exact format:
 
-MARKET [number]: [decision]
+MARKET [number] [market title]: [decision]
+American Odds / Probability Odds: [American odds, e.g., +150 or -200 / Probability odds, e.g., 0.01 or 0.75]
 Reasoning: [brief 1-2 sentence explanation that references the news context if relevant]
 
 Decision must be one of: YES, NO, or NO_TRADE
@@ -412,9 +414,9 @@ Provide a concise summary of the most relevant and recent information."""
             if keyword in title_lower:
                 return (True, f"crypto/bitcoin ({keyword})")
 
-        for keyword in IGNORE_SPORTS_KEYWORDS:
-            if keyword in title_lower:
-                return (True, f"sports ({keyword})")
+        # for keyword in IGNORE_SPORTS_KEYWORDS:
+        #     if keyword in title_lower:
+        #         return (True, f"sports ({keyword})")
 
         return (False, None)
 
